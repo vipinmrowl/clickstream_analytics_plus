@@ -2,8 +2,7 @@
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 import 'dart:js_util' as js_util;
-import 'dart:js_interop';
-
+import 'package:js/js.dart';
 import 'clickstream_analytics_plus_platform_interface.dart';
 
 // JS interop for AWS Clickstream Web SDK
@@ -26,11 +25,12 @@ class ClickstreamAnalyticsPlusWeb extends ClickstreamAnalyticsPlusPlatform {
   }
 
   @override
-  Future<void> initialize({
+  Future<bool> initialize({
     required String appId,
     required String endpoint,
   }) async {
     clickstreamAnalytics?.initialize(appId, endpoint);
+    return true;
   }
 
   @override
