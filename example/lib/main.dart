@@ -134,10 +134,12 @@ class _ClickstreamDemoAppState extends State<ClickstreamDemoApp>
                 onPressed: () => _recordEvent('button_click'),
                 child: const Text('Record button_click'),
               ),
+              SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () => _recordEvent('screen_view'),
                 child: const Text('Record screen_view'),
               ),
+              SizedBox(height: 10),
               ElevatedButton(
                 onPressed: _flush,
                 child: const Text('Flush Events'),
@@ -168,6 +170,7 @@ class _ClickstreamDemoAppState extends State<ClickstreamDemoApp>
                 },
                 child: const Text('Set New User ID'),
               ),
+              SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () async {
                   await _clickstream.setUserAttributes({
@@ -178,6 +181,7 @@ class _ClickstreamDemoAppState extends State<ClickstreamDemoApp>
                 },
                 child: const Text('Update User Attributes'),
               ),
+              SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () async {
                   await _clickstream.setGlobalAttributes({
