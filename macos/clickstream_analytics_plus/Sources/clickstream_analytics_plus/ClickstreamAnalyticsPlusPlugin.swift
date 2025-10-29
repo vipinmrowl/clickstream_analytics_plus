@@ -15,11 +15,7 @@ public class ClickstreamAnalyticsPlusPlugin: NSObject, FlutterPlugin {
       guard let args = call.arguments as? [String: Any],
             let appId = args["appId"] as? String,
             let endpoint = args["endpoint"] as? String else {
-        result(FlutterError(
-          code: "INVALID_ARGUMENTS",
-          message: "Missing appId or endpoint",
-          details: nil
-        ))
+        result(FlutterError(code: "INVALID_ARGUMENTS", message: "Missing appId or endpoint", details: nil))
         return
       }
 
@@ -27,30 +23,54 @@ public class ClickstreamAnalyticsPlusPlugin: NSObject, FlutterPlugin {
         let configuration = ClickstreamConfiguration()
           .withAppId(appId)
           .withEndpoint(endpoint)
-          .withLogEvents(true)
-          .withCompressEvents(true)
-          .withSessionTimeoutDuration(1800000)
-          .withInitialGlobalAttributes([
-            ClickstreamAnalytics.Attr.TRAFFIC_SOURCE_SOURCE: "flutter"
-          ])
 
-        try ClickstreamAnalytics.initSDK(configuration)
-        print("✅ Clickstream SDK initialized successfully for appId: \(appId)")
-
-        // 🧠 Critical fix: respond back on main thread, after init finishes
-        DispatchQueue.main.async {
-          print("📤 Sending initialization success back to Flutter")
-          result(true)
+        if let logEvents = args["logEvents"] as? Bool {
+          _ = configuration.withLogEvents(logEvents)
+        }
+        if let compressEvents = args["compressEvents"] as? Bool {
+          _ = configuration.withCompressEvents(compressEvents)
+        }
+        if let sessionTimeoutMs = args["sessionTimeoutMs"] as? Int {
+          _ = configuration.withSessionTimeoutDuration(sessionTimeoutMs)
+        }
+        if let sendEventIntervalMs = args["sendEventIntervalMs"] as? Int {
+          _ = configuration.withSendEventInterval(sendEventIntervalMs)
+        }
+        if let initialGlobal = args["initialGlobalAttributes"] as? [String: Any] {
+          _ = configuration.withInitialGlobalAttributes(self.makeAttributes(initialGlobal))
         }
 
+        try ClickstreamAnalytics.initSDK(configuration)
+        DispatchQueue.main.async { result(true) }
       } catch {
-        print("❌ Failed to initialize ClickstreamAnalytics: \(error)")
-        result(FlutterError(
-          code: "INIT_ERROR",
-          message: "Failed to initialize ClickstreamAnalytics: \(error)",
-          details: nil
-        ))
+        result(FlutterError(code: "INIT_ERROR", message: "Failed to initialize ClickstreamAnalytics: \(error)", details: nil))
       }
+    case "pauseSession":
+      ClickstreamAnalytics.pauseSession()
+      result(nil)
+    case "resumeSession":
+      ClickstreamAnalytics.resumeSession()
+      result(nil)
+    case "setGlobalAttributes":
+      if let args = call.arguments as? [String: Any],
+         let attributes = args["attributes"] as? [String: Any] {
+        ClickstreamAnalytics.addGlobalAttributes(self.makeAttributes(attributes))
+      }
+      result(nil)
+    case "removeGlobalAttribute":
+      if let args = call.arguments as? [String: Any],
+         let key = args["key"] as? String {
+        ClickstreamAnalytics.removeGlobalAttribute(key)
+      }
+      result(nil)
+    case "enableLogging":
+      // Not supported as a runtime toggle; configure via init.
+      result(nil)
+    case "reset":
+      ClickstreamAnalytics.reset()
+      result(nil)
+    case "getSdkVersion":
+      result(ClickstreamAnalytics.getSDKVersion())
     case "recordEvent":
       recordEvent(call.arguments as! [String: Any])
       result(nil)
@@ -101,16 +121,36 @@ public class ClickstreamAnalyticsPlusPlugin: NSObject, FlutterPlugin {
 
 
 
-    func recordEvent(_ arguments: [String: Any]) {
+  func recordEvent(_ arguments: [String: Any]) {
     let name = arguments["name"] as! String
-    let attrs = (arguments["attributes"] as? ClickstreamAttribute) ?? [:]
+    let attrsDict = arguments["attributes"] as? [String: Any] ?? [:]
+    let attrs = makeAttributes(attrsDict)
     ClickstreamAnalytics.recordEvent(name, attrs)
   }
 
   func setUserAttributes(_ arguments: [String: Any]) {
-    if let attributes = arguments["attributes"] as? ClickstreamAttribute {
-      ClickstreamAnalytics.addUserAttributes(attributes)
+    if let dict = arguments["attributes"] as? [String: Any] {
+      ClickstreamAnalytics.addUserAttributes(makeAttributes(dict))
     }
+  }
+
+  func makeAttributes(_ dict: [String: Any]) -> ClickstreamAttribute {
+      let builder = ClickstreamAttribute()
+      dict.forEach { (key, value) in
+          switch value {
+          case let s as String:
+              builder.add(key, s)
+          case let b as Bool:
+              builder.add(key, b)
+          case let i as Int:
+              builder.add(key, i)
+          case let d as Double:
+              builder.add(key, d)
+          default:
+              builder.add(key, String(describing: value))
+          }
+      }
+      return builder
   }
 }
 

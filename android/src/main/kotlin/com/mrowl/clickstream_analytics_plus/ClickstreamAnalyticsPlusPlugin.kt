@@ -50,6 +50,34 @@ class ClickstreamAnalyticsPlusPlugin : FlutterPlugin, MethodCallHandler {
                 ClickstreamAnalytics.flushEvents()
                 result.success(null)
             }
+           // Replace invalid calls with proper equivalents or safe no-ops
+            "pauseSession" -> {
+                // AWS Android SDK manages session automatically. No direct method.
+                result.success(null)
+            }
+            "resumeSession" -> {
+                // No-op; automatic session tracking
+                result.success(null)
+            }
+            "setGlobalAttributes" -> {
+                val args = call.arguments as? Map<String, Any> ?: emptyMap()
+                val attrs = args["attributes"] as? Map<String, Any> ?: emptyMap()
+                ClickstreamAnalytics.addGlobalAttributes(getClickStreamAttributes(attrs))
+                result.success(null)
+            }
+            "removeGlobalAttribute" -> {
+                // No API available; rebuild the global attributes map if needed
+                result.success(null)
+            }
+            "getSdkVersion" -> {
+                // AWS SDK doesn’t expose version programmatically
+                result.success("Android SDK (Clickstream) - version not exposed")
+            }
+            "enableLogging" -> {
+                // Not supported at runtime by Android SDK; advise re-init via Dart docs.
+                result.success(null)
+            }
+          
             else -> {
                 result.notImplemented()
             }
@@ -60,9 +88,25 @@ class ClickstreamAnalyticsPlusPlugin : FlutterPlugin, MethodCallHandler {
         return try {
             val appId = arguments["appId"] as? String ?: return false
             val endpoint = arguments["endpoint"] as? String ?: return false
+            val logEvents = arguments["logEvents"] as? Boolean
+            val compressEvents = arguments["compressEvents"] as? Boolean
+            val sessionTimeoutMs = (arguments["sessionTimeoutMs"] as? Number)?.toLong()
+            val sendEventIntervalMs = (arguments["sendEventIntervalMs"] as? Number)?.toLong()
+            val initialGlobalAttributes = arguments["initialGlobalAttributes"] as? Map<String, Any>
+
             val configuration = ClickstreamConfiguration()
                 .withAppId(appId)
                 .withEndpoint(endpoint)
+
+            if (logEvents != null) configuration.withLogEvents(logEvents)
+            if (compressEvents != null) configuration.withCompressEvents(compressEvents)
+            if (sessionTimeoutMs != null) configuration.withSessionTimeoutDuration(sessionTimeoutMs)
+            if (sendEventIntervalMs != null)
+                configuration.withSendEventsInterval(sendEventIntervalMs)
+            if (initialGlobalAttributes != null) {
+                configuration.withInitialGlobalAttributes(getClickStreamAttributes(initialGlobalAttributes))
+            }
+
             ClickstreamAnalytics.init(context, configuration)
             true
         } catch (e: Exception) {
