@@ -6,6 +6,9 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url = uri("https://aws-solutions.github.io/aws-clickstream-analytics-android/")
+        }
     }
 
     dependencies {
@@ -18,6 +21,9 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url = uri("https://aws-solutions.github.io/aws-clickstream-analytics-android/")
+        }
     }
 }
 
@@ -30,6 +36,7 @@ android {
     compileSdk = 36
 
     compileOptions {
+        coreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -50,6 +57,8 @@ android {
     dependencies {
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.mockito:mockito-core:5.0.0")
+        implementation("software.aws.solution:clickstream:1.0.0")
+        coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     }
 
     testOptions {

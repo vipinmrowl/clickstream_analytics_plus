@@ -1,0 +1,1 @@
+-keep class software.aws.solution.clickstream.** { *; }
