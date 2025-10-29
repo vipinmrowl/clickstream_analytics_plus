@@ -1,7 +1,7 @@
 name: clickstream_analytics_plus
 description: "A new Flutter plugin project."
 version: 0.0.1
-homepage:
+homepage: none
 
 environment:
   sdk: ^3.9.2
@@ -42,8 +42,12 @@ flutter:
         pluginClass: ClickstreamAnalyticsPlusPlugin
       ios:
         pluginClass: ClickstreamAnalyticsPlusPlugin
+        swiftPackageManagerDependencies:
+          - 'https://github.com/aws-solutions-library-samples/clickstream-analytics-on-aws-swift-sdk.git'
       macos:
         pluginClass: ClickstreamAnalyticsPlusPlugin
+        swiftPackageManagerDependencies:
+          - 'https://github.com/aws-solutions-library-samples/clickstream-analytics-on-aws-swift-sdk.git'
       web:
         pluginClass: ClickstreamAnalyticsPlusWeb
         fileName: clickstream_analytics_plus_web.dart

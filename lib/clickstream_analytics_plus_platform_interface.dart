@@ -8,7 +8,8 @@ abstract class ClickstreamAnalyticsPlusPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static ClickstreamAnalyticsPlusPlatform _instance = MethodChannelClickstreamAnalyticsPlus();
+  static ClickstreamAnalyticsPlusPlatform _instance =
+      MethodChannelClickstreamAnalyticsPlus();
 
   /// The default instance of [ClickstreamAnalyticsPlusPlatform] to use.
   ///
@@ -23,7 +24,29 @@ abstract class ClickstreamAnalyticsPlusPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
+  Future<bool> initialize({
+    required String appId,
+    required String endpoint,
+  }) async {
+    throw UnimplementedError('initialize() has not been implemented.');
+  }
+
+  Future<void> recordEvent(
+    String name, {
+    Map<String, dynamic>? attributes,
+  }) async {
+    throw UnimplementedError('recordEvent() has not been implemented.');
+  }
+
+  Future<void> setUserId(String userId) async {
+    throw UnimplementedError('setUserId() has not been implemented.');
+  }
+
+  Future<void> setUserAttributes(Map<String, String> attributes) async {
+    throw UnimplementedError('setUserAttributes() has not been implemented.');
+  }
+
+  Future<void> flushEvents() async {
+    throw UnimplementedError('flushEvents() has not been implemented.');
   }
 }

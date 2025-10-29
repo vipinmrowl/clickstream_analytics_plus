@@ -1,26 +1,59 @@
-// In order to *not* need this ignore, consider extracting the "web" version
-// of your plugin as a separate package, instead of inlining it in the same
-// package as the core of your plugin.
 // ignore: avoid_web_libraries_in_flutter
-
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-import 'package:web/web.dart' as web;
+
+import 'dart:js_util' as js_util;
+import 'dart:js_interop';
 
 import 'clickstream_analytics_plus_platform_interface.dart';
 
-/// A web implementation of the ClickstreamAnalyticsPlusPlatform of the ClickstreamAnalyticsPlus plugin.
-class ClickstreamAnalyticsPlusWeb extends ClickstreamAnalyticsPlusPlatform {
-  /// Constructs a ClickstreamAnalyticsPlusWeb
-  ClickstreamAnalyticsPlusWeb();
+// JS interop for AWS Clickstream Web SDK
+@JS('clickstreamAnalytics')
+external ClickstreamAnalyticsJS? get clickstreamAnalytics;
 
+@JS()
+@anonymous
+class ClickstreamAnalyticsJS {
+  external void initialize(String appId, String endpoint);
+  external void recordEvent(String name, dynamic attributes);
+  external void setUserId(String userId);
+  external void setUserAttributes(dynamic attributes);
+  external void flushEvents();
+}
+
+class ClickstreamAnalyticsPlusWeb extends ClickstreamAnalyticsPlusPlatform {
   static void registerWith(Registrar registrar) {
     ClickstreamAnalyticsPlusPlatform.instance = ClickstreamAnalyticsPlusWeb();
   }
 
-  /// Returns a [String] containing the version of the platform.
   @override
-  Future<String?> getPlatformVersion() async {
-    final version = web.window.navigator.userAgent;
-    return version;
+  Future<void> initialize({
+    required String appId,
+    required String endpoint,
+  }) async {
+    clickstreamAnalytics?.initialize(appId, endpoint);
+  }
+
+  @override
+  Future<void> recordEvent(
+    String name, {
+    Map<String, dynamic>? attributes,
+  }) async {
+    final jsAttributes = attributes != null ? js_util.jsify(attributes) : null;
+    clickstreamAnalytics?.recordEvent(name, jsAttributes);
+  }
+
+  @override
+  Future<void> setUserId(String userId) async {
+    clickstreamAnalytics?.setUserId(userId);
+  }
+
+  @override
+  Future<void> setUserAttributes(Map<String, String> attributes) async {
+    clickstreamAnalytics?.setUserAttributes(js_util.jsify(attributes));
+  }
+
+  @override
+  Future<void> flushEvents() async {
+    clickstreamAnalytics?.flushEvents();
   }
 }
