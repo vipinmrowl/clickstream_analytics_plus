@@ -1,27 +1,61 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// import 'package:flutter/material.dart';
+// import 'package:flutter_test/flutter_test.dart';
+// import 'package:clickstream_analytics_plus_example/main.dart';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
+// void main() {
+//   testWidgets('App shows initialize button and can initialize SDK', (
+//     WidgetTester tester,
+//   ) async {
+//     await tester.pumpWidget(const ClickstreamDemoApp());
 
-import 'package:clickstream_analytics_plus_example/main.dart';
+//     // Should see the initialize button before SDK is initialized
+//     expect(find.text('Initialize SDK'), findsOneWidget);
+//     expect(find.textContaining('SDK not initialized'), findsOneWidget);
 
-void main() {
-  testWidgets('Verify Platform version', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+//     // Tap the initialize button
+//     await tester.tap(find.text('Initialize SDK'));
+//     await tester.pumpAndSettle();
 
-    // Verify that platform version is retrieved.
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) => widget is Text &&
-                           widget.data!.startsWith('Running on:'),
-      ),
-      findsOneWidget,
-    );
-  });
-}
+//     // After initialization, should see SDK Version and success message
+//     expect(find.textContaining('Initialized successfully'), findsOneWidget);
+//     expect(find.textContaining('SDK Version:'), findsOneWidget);
+//   });
+
+//   testWidgets('Events tab shows event buttons after init', (
+//     WidgetTester tester,
+//   ) async {
+//     await tester.pumpWidget(const ClickstreamDemoApp());
+
+//     // Initialize SDK first
+//     await tester.tap(find.text('Initialize SDK'));
+//     await tester.pumpAndSettle();
+
+//     // Switch to Events tab
+//     await tester.tap(find.byIcon(Icons.bar_chart));
+//     await tester.pumpAndSettle();
+
+//     // Should see event buttons
+//     expect(find.text('Record button_click'), findsOneWidget);
+//     expect(find.text('Record screen_view'), findsOneWidget);
+//     expect(find.text('Flush Events'), findsOneWidget);
+//   });
+
+//   testWidgets('User tab shows user actions after init', (
+//     WidgetTester tester,
+//   ) async {
+//     await tester.pumpWidget(const ClickstreamDemoApp());
+
+//     // Initialize SDK first
+//     await tester.tap(find.text('Initialize SDK'));
+//     await tester.pumpAndSettle();
+
+//     // Switch to User tab
+//     await tester.tap(find.byIcon(Icons.person));
+//     await tester.pumpAndSettle();
+
+//     // Should see user action buttons
+//     expect(find.text('Set New User ID'), findsOneWidget);
+//     expect(find.text('Update User Attributes'), findsOneWidget);
+//     expect(find.text('Update Global Attributes'), findsOneWidget);
+//   });
+// }

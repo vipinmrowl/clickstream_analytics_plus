@@ -1,25 +1,48 @@
-// This is a basic Flutter integration test.
-//
-// Since integration tests run in a full Flutter application, they can interact
-// with the host side of a plugin implementation, unlike Dart unit tests.
-//
-// For more information about Flutter integration tests, please see
-// https://flutter.dev/to/integration-testing
-
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-
 import 'package:clickstream_analytics_plus/clickstream_analytics_plus.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('getPlatformVersion test', (WidgetTester tester) async {
-    final ClickstreamAnalyticsPlus plugin = ClickstreamAnalyticsPlus();
-    final String? version = await plugin.getPlatformVersion();
-    // The version string depends on the host platform running the test, so
-    // just assert that some non-empty string is returned.
-    expect(version?.isNotEmpty, true);
+  testWidgets('ClickstreamAnalyticsPlus integration test', (
+    WidgetTester tester,
+  ) async {
+    final plugin = ClickstreamAnalyticsPlus();
+
+    // Initialize SDK
+    final ok = await plugin.initialize(
+      appId: 'TestAppDev',
+      endpoint: 'https://events.drowl.com/collect',
+      logEvents: true,
+      compressEvents: true,
+      sessionTimeoutMs: 1800000,
+      sendEventIntervalMs: 10000,
+      initialGlobalAttributes: {
+        'platform': 'flutter',
+        'build': 'integration_test',
+      },
+    );
+    expect(ok, isTrue);
+
+    // Set user ID
+    await plugin.setUserId('integration_user_1');
+
+    // Set user attributes
+    await plugin.setUserAttributes({'plan': 'Integration', 'region': 'Test'});
+
+    // Record an event
+    await plugin.recordEvent(
+      'integration_test_event',
+      attributes: {'timestamp': DateTime.now().toIso8601String(), 'test': true},
+    );
+
+    // Flush events
+    await plugin.flushEvents();
+
+    // Get SDK version
+    final sdkVersion = await plugin.getSdkVersion();
+    expect(sdkVersion, isNotNull);
+    expect(sdkVersion!.isNotEmpty, isTrue);
   });
 }

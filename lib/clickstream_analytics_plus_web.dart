@@ -17,6 +17,12 @@ class ClickstreamAnalyticsJS {
   external void setUserId(String userId);
   external void setUserAttributes(dynamic attributes);
   external void flushEvents();
+  external void pauseSession();
+  external void resumeSession();
+  external void setGlobalAttributes(dynamic attributes);
+  external void removeGlobalAttribute(String key);
+  external String getSDKVersion();
+  external void reset();
 }
 
 class ClickstreamAnalyticsPlusWeb extends ClickstreamAnalyticsPlusPlatform {
@@ -28,8 +34,36 @@ class ClickstreamAnalyticsPlusWeb extends ClickstreamAnalyticsPlusPlatform {
   Future<bool> initialize({
     required String appId,
     required String endpoint,
+    bool? logEvents,
+    bool? compressEvents,
+    int? sessionTimeoutMs,
+    int? sendEventIntervalMs,
+    Map<String, dynamic>? initialGlobalAttributes,
   }) async {
-    clickstreamAnalytics?.initialize(appId, endpoint);
+    // Try to pass an options object if the Web SDK supports it; otherwise fall back.
+    final options = {
+      if (logEvents != null) 'logEvents': logEvents,
+      if (compressEvents != null) 'compressEvents': compressEvents,
+      if (sessionTimeoutMs != null) 'sessionTimeoutMs': sessionTimeoutMs,
+      if (sendEventIntervalMs != null)
+        'sendEventIntervalMs': sendEventIntervalMs,
+      if (initialGlobalAttributes != null)
+        'initialGlobalAttributes': initialGlobalAttributes,
+    };
+    if (options.isEmpty) {
+      clickstreamAnalytics?.initialize(appId, endpoint);
+    } else {
+      // Some builds expose initialize(appId, endpoint, options)
+      try {
+        js_util.callMethod(clickstreamAnalytics as Object, 'initialize', [
+          appId,
+          endpoint,
+          js_util.jsify(options),
+        ]);
+      } catch (_) {
+        clickstreamAnalytics?.initialize(appId, endpoint);
+      }
+    }
     return true;
   }
 
@@ -48,12 +82,59 @@ class ClickstreamAnalyticsPlusWeb extends ClickstreamAnalyticsPlusPlatform {
   }
 
   @override
-  Future<void> setUserAttributes(Map<String, String> attributes) async {
+  Future<void> setUserAttributes(Map<String, dynamic> attributes) async {
     clickstreamAnalytics?.setUserAttributes(js_util.jsify(attributes));
   }
 
   @override
   Future<void> flushEvents() async {
     clickstreamAnalytics?.flushEvents();
+  }
+
+  @override
+  Future<void> pauseSession() async {
+    try {
+      clickstreamAnalytics?.pauseSession();
+    } catch (_) {}
+  }
+
+  @override
+  Future<void> resumeSession() async {
+    try {
+      clickstreamAnalytics?.resumeSession();
+    } catch (_) {}
+  }
+
+  @override
+  Future<void> setGlobalAttributes(Map<String, dynamic> attributes) async {
+    try {
+      clickstreamAnalytics?.setGlobalAttributes(js_util.jsify(attributes));
+    } catch (_) {}
+  }
+
+  @override
+  Future<void> removeGlobalAttribute(String key) async {
+    try {
+      clickstreamAnalytics?.removeGlobalAttribute(key);
+    } catch (_) {}
+  }
+
+  @override
+  Future<void> enableLogging(bool enabled) async {
+    // Web SDK typically config-only; safe to ignore at runtime.
+  }
+
+  @override
+  Future<String?> getSdkVersion() async {
+    try {
+      final v = js_util.callMethod(
+        clickstreamAnalytics as Object,
+        'getSDKVersion',
+        [],
+      );
+      return v?.toString();
+    } catch (_) {
+      return 'Web Clickstream SDK - version not exposed';
+    }
   }
 }

@@ -8,16 +8,27 @@ class MethodChannelClickstreamAnalyticsPlus
   );
 
   @override
+  @override
   Future<bool> initialize({
     required String appId,
     required String endpoint,
+    bool? logEvents,
+    bool? compressEvents,
+    int? sessionTimeoutMs,
+    int? sendEventIntervalMs,
+    Map<String, dynamic>? initialGlobalAttributes,
   }) async {
     final result = await _channel.invokeMethod('initialize', {
       'appId': appId,
       'endpoint': endpoint,
+      if (logEvents != null) 'logEvents': logEvents,
+      if (compressEvents != null) 'compressEvents': compressEvents,
+      if (sessionTimeoutMs != null) 'sessionTimeoutMs': sessionTimeoutMs,
+      if (sendEventIntervalMs != null)
+        'sendEventIntervalMs': sendEventIntervalMs,
+      if (initialGlobalAttributes != null)
+        'initialGlobalAttributes': initialGlobalAttributes,
     });
-
-    // Handle iOS returning NSNumber(1)
     if (result == true || result == 1 || result?.toString() == 'true') {
       return true;
     }
@@ -41,7 +52,7 @@ class MethodChannelClickstreamAnalyticsPlus
   }
 
   @override
-  Future<void> setUserAttributes(Map<String, String> attributes) async {
+  Future<void> setUserAttributes(Map<String, dynamic> attributes) async {
     await _channel.invokeMethod('setUserAttributes', {
       'attributes': attributes,
     });
@@ -50,5 +61,38 @@ class MethodChannelClickstreamAnalyticsPlus
   @override
   Future<void> flushEvents() async {
     await _channel.invokeMethod('flushEvents');
+  }
+
+  @override
+  Future<void> pauseSession() async {
+    await _channel.invokeMethod('pauseSession');
+  }
+
+  @override
+  Future<void> resumeSession() async {
+    await _channel.invokeMethod('resumeSession');
+  }
+
+  @override
+  Future<void> setGlobalAttributes(Map<String, dynamic> attributes) async {
+    await _channel.invokeMethod('setGlobalAttributes', {
+      'attributes': attributes,
+    });
+  }
+
+  @override
+  Future<void> removeGlobalAttribute(String key) async {
+    await _channel.invokeMethod('removeGlobalAttribute', {'key': key});
+  }
+
+  @override
+  Future<void> enableLogging(bool enabled) async {
+    await _channel.invokeMethod('enableLogging', {'enabled': enabled});
+  }
+
+  @override
+  Future<String?> getSdkVersion() async {
+    final v = await _channel.invokeMethod('getSdkVersion');
+    return v?.toString();
   }
 }

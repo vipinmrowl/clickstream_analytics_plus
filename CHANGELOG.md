@@ -1,3 +1,4 @@
 ## 0.0.1
-
-* TODO: Describe initial release.
+- Initial release with Android, iOS, macOS, and Web support.
+- Federated plugin architecture.
+- Multi-tab sample app included.

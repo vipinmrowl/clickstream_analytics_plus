@@ -27,6 +27,11 @@ abstract class ClickstreamAnalyticsPlusPlatform extends PlatformInterface {
   Future<bool> initialize({
     required String appId,
     required String endpoint,
+    bool? logEvents,
+    bool? compressEvents,
+    int? sessionTimeoutMs,
+    int? sendEventIntervalMs,
+    Map<String, dynamic>? initialGlobalAttributes,
   }) async {
     throw UnimplementedError('initialize() has not been implemented.');
   }
@@ -42,11 +47,37 @@ abstract class ClickstreamAnalyticsPlusPlatform extends PlatformInterface {
     throw UnimplementedError('setUserId() has not been implemented.');
   }
 
-  Future<void> setUserAttributes(Map<String, String> attributes) async {
+  Future<void> setUserAttributes(Map<String, dynamic> attributes) async {
     throw UnimplementedError('setUserAttributes() has not been implemented.');
   }
 
   Future<void> flushEvents() async {
     throw UnimplementedError('flushEvents() has not been implemented.');
+  }
+
+  Future<void> pauseSession() async {
+    throw UnimplementedError('pauseSession() has not been implemented.');
+  }
+
+  Future<void> resumeSession() async {
+    throw UnimplementedError('resumeSession() has not been implemented.');
+  }
+
+  Future<void> setGlobalAttributes(Map<String, dynamic> attributes) async {
+    throw UnimplementedError('setGlobalAttributes() has not been implemented.');
+  }
+
+  Future<void> removeGlobalAttribute(String key) async {
+    throw UnimplementedError(
+      'removeGlobalAttribute() has not been implemented.',
+    );
+  }
+
+  Future<void> enableLogging(bool enabled) async {
+    throw UnimplementedError('enableLogging() has not been implemented.');
+  }
+
+  Future<String?> getSdkVersion() async {
+    throw UnimplementedError('getSdkVersion() has not been implemented.');
   }
 }
