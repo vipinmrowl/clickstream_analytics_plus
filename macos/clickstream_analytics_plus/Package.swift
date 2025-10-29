@@ -11,17 +11,28 @@ let package = Package(
     products: [
         .library(name: "clickstream-analytics-plus", targets: ["clickstream_analytics_plus"])
     ],
-    dependencies: [],
+    dependencies: [
+        .package(
+            url: "https://github.com/aws-solutions-library-samples/clickstream-analytics-on-aws-swift-sdk.git",
+            from: "0.12.6"
+        )
+    ],
     targets: [
         .target(
             name: "clickstream_analytics_plus",
-            dependencies: [],
+            dependencies: [
+                .product(
+                    name: "Clickstream",
+                    package: "clickstream-analytics-on-aws-swift-sdk"
+                )
+            ],
+            path: "Sources/clickstream_analytics_plus",
             resources: [
                 // If your plugin requires a privacy manifest, for example if it collects user
                 // data, update the PrivacyInfo.xcprivacy file to describe your plugin's
                 // privacy impact, and then uncomment these lines. For more information, see
                 // https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
-                // .process("PrivacyInfo.xcprivacy"),
+                .process("PrivacyInfo.xcprivacy"),
 
                 // If you have other resources that need to be bundled with your plugin, refer to
                 // the following instructions to add them:

@@ -6,7 +6,8 @@
 *.swp
 .buildlog/
 .history
-
+.build/
+.swiftpm/
 
 
 # Flutter repo-specific
