@@ -25,11 +25,16 @@ class ClickstreamAnalyticsJS {
   external void reset();
 }
 
+/// Web implementation of [ClickstreamAnalyticsPlusPlatform] using JS interop.
 class ClickstreamAnalyticsPlusWeb extends ClickstreamAnalyticsPlusPlatform {
+  /// Registers the web implementation with the Flutter plugin registrar.
   static void registerWith(Registrar registrar) {
     ClickstreamAnalyticsPlusPlatform.instance = ClickstreamAnalyticsPlusWeb();
   }
 
+  /// Initializes the Clickstream Analytics SDK on the web platform.
+  ///
+  /// Returns `true` if initialization was successful.
   @override
   Future<bool> initialize({
     required String appId,
@@ -67,6 +72,7 @@ class ClickstreamAnalyticsPlusWeb extends ClickstreamAnalyticsPlusPlatform {
     return true;
   }
 
+  /// Records an analytics event with the given [name] and optional [attributes].
   @override
   Future<void> recordEvent(
     String name, {
@@ -76,21 +82,25 @@ class ClickstreamAnalyticsPlusWeb extends ClickstreamAnalyticsPlusPlatform {
     clickstreamAnalytics?.recordEvent(name, jsAttributes);
   }
 
+  /// Sets the user ID for analytics tracking.
   @override
   Future<void> setUserId(String userId) async {
     clickstreamAnalytics?.setUserId(userId);
   }
 
+  /// Sets user attributes for analytics tracking.
   @override
   Future<void> setUserAttributes(Map<String, dynamic> attributes) async {
     clickstreamAnalytics?.setUserAttributes(js_util.jsify(attributes));
   }
 
+  /// Flushes all queued analytics events to the backend.
   @override
   Future<void> flushEvents() async {
     clickstreamAnalytics?.flushEvents();
   }
 
+  /// Pauses the current analytics session.
   @override
   Future<void> pauseSession() async {
     try {
@@ -98,6 +108,7 @@ class ClickstreamAnalyticsPlusWeb extends ClickstreamAnalyticsPlusPlatform {
     } catch (_) {}
   }
 
+  /// Resumes the current analytics session.
   @override
   Future<void> resumeSession() async {
     try {
@@ -105,6 +116,7 @@ class ClickstreamAnalyticsPlusWeb extends ClickstreamAnalyticsPlusPlatform {
     } catch (_) {}
   }
 
+  /// Sets global attributes for all analytics events.
   @override
   Future<void> setGlobalAttributes(Map<String, dynamic> attributes) async {
     try {
@@ -112,6 +124,7 @@ class ClickstreamAnalyticsPlusWeb extends ClickstreamAnalyticsPlusPlatform {
     } catch (_) {}
   }
 
+  /// Removes a global attribute by [key].
   @override
   Future<void> removeGlobalAttribute(String key) async {
     try {
@@ -119,11 +132,13 @@ class ClickstreamAnalyticsPlusWeb extends ClickstreamAnalyticsPlusPlatform {
     } catch (_) {}
   }
 
+  /// Enables or disables logging for the analytics SDK. (No-op on web.)
   @override
   Future<void> enableLogging(bool enabled) async {
     // Web SDK typically config-only; safe to ignore at runtime.
   }
 
+  /// Gets the SDK version from the web Clickstream SDK, if available.
   @override
   Future<String?> getSdkVersion() async {
     try {

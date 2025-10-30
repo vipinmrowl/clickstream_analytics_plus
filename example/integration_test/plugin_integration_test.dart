@@ -12,8 +12,8 @@ void main() {
 
     // Initialize SDK
     final ok = await plugin.initialize(
-      appId: 'TestAppDev',
-      endpoint: 'https://events.drowl.com/collect',
+      appId: 'AppId',
+      endpoint: 'https://events.example.com/collect',
       logEvents: true,
       compressEvents: true,
       sessionTimeoutMs: 1800000,
