@@ -2,16 +2,22 @@ import Flutter
 import UIKit
 import Clickstream
 
+
+/// Flutter plugin for Clickstream Analytics on iOS/macOS.
 public class ClickstreamAnalyticsPlusPlugin: NSObject, FlutterPlugin {
+
+  /// Registers the plugin with the Flutter engine.
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "clickstream_analytics_plus", binaryMessenger: registrar.messenger())
     let instance = ClickstreamAnalyticsPlusPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
+  /// Handles method calls from Dart to the native plugin.
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
     case "initialize":
+      // Initializes the Clickstream SDK with provided arguments.
       guard let args = call.arguments as? [String: Any],
             let appId = args["appId"] as? String,
             let endpoint = args["endpoint"] as? String else {
@@ -47,6 +53,7 @@ public class ClickstreamAnalyticsPlusPlugin: NSObject, FlutterPlugin {
       }
 
     case "setGlobalAttributes":
+      // Sets global attributes for all events.
       if let args = call.arguments as? [String: Any],
          let attributes = args["attributes"] as? [String: Any] {
         ClickstreamAnalytics.addGlobalAttributes(self.makeAttributes(attributes))
@@ -59,20 +66,25 @@ public class ClickstreamAnalyticsPlusPlugin: NSObject, FlutterPlugin {
       // SDK does not expose this directly
       result(nil)
     case "flushEvents":
+      // Flushes all queued events.
       ClickstreamAnalytics.flushEvents()
       result(nil)
     case "getSdkVersion":
+      // Returns the SDK version (not exposed by native SDK).
       result("iOS/macOS Clickstream SDK - version not exposed")
     case "enableLogging":
       // Not supported as a runtime toggle; configure via init.
       result(nil)
     case "recordEvent":
+      // Records an analytics event.
       recordEvent(call.arguments as! [String: Any])
       result(nil)
     case "setUserId":
+      // Sets the user ID for analytics tracking.
       setUserId(call.arguments as! [String: Any])
       result(nil)
     case "setUserAttributes":
+      // Sets user attributes for analytics tracking.
       setUserAttributes(call.arguments as! [String: Any])
       result(nil)
     default:
@@ -80,6 +92,8 @@ public class ClickstreamAnalyticsPlusPlugin: NSObject, FlutterPlugin {
     }
   }
 
+
+  /// Initializes the Clickstream SDK with a default configuration (legacy helper).
   func initSDK(_ arguments: [String: Any]) -> Bool {
     do {
       let configuration = ClickstreamConfiguration()
@@ -103,6 +117,8 @@ public class ClickstreamAnalyticsPlusPlugin: NSObject, FlutterPlugin {
 
  
 
+
+  /// Sets the user ID for analytics tracking.
   func setUserId(_ arguments: [String: Any]) {
     if arguments["userId"] is NSNull {
       ClickstreamAnalytics.setUserId(nil)
@@ -112,35 +128,40 @@ public class ClickstreamAnalyticsPlusPlugin: NSObject, FlutterPlugin {
   }
 
 
-    func recordEvent(_ arguments: [String: Any]) {
-        let name = arguments["name"] as! String
-        let attrsDict = arguments["attributes"] as? [String: Any] ?? [:]
-        let attrs = makeAttributes(attrsDict)
-        ClickstreamAnalytics.recordEvent(name, attrs)
-    }
 
-    func setUserAttributes(_ arguments: [String: Any]) {
-        if let dict = arguments["attributes"] as? [String: Any] {
-            ClickstreamAnalytics.addUserAttributes(makeAttributes(dict))
-        }
-    }
+  /// Records an analytics event with the given name and attributes.
+  func recordEvent(_ arguments: [String: Any]) {
+    let name = arguments["name"] as! String
+    let attrsDict = arguments["attributes"] as? [String: Any] ?? [:]
+    let attrs = makeAttributes(attrsDict)
+    ClickstreamAnalytics.recordEvent(name, attrs)
+  }
 
-    func makeAttributes(_ dict: [String: Any]) -> ClickstreamAttribute {
-        var attributes: ClickstreamAttribute = [:]
-        dict.forEach { (key, value) in
-            if let s = value as? String {
-                attributes[key] = s
-            } else if let b = value as? Bool {
-                attributes[key] = b
-            } else if let i = value as? Int {
-                attributes[key] = i
-            } else if let d = value as? Double {
-                attributes[key] = d
-            } else {
-                attributes[key] = String(describing: value)
-            }
-        }
-        return attributes
-    } 
+
+  /// Sets user attributes for analytics tracking.
+  func setUserAttributes(_ arguments: [String: Any]) {
+    if let dict = arguments["attributes"] as? [String: Any] {
+      ClickstreamAnalytics.addUserAttributes(makeAttributes(dict))
+    }
+  }
+
+  /// Converts a [String: Any] dictionary to a ClickstreamAttribute.
+  func makeAttributes(_ dict: [String: Any]) -> ClickstreamAttribute {
+    var attributes: ClickstreamAttribute = [:]
+    dict.forEach { (key, value) in
+      if let s = value as? String {
+        attributes[key] = s
+      } else if let b = value as? Bool {
+        attributes[key] = b
+      } else if let i = value as? Int {
+        attributes[key] = i
+      } else if let d = value as? Double {
+        attributes[key] = d
+      } else {
+        attributes[key] = String(describing: value)
+      }
+    }
+    return attributes
+  }
 }
 

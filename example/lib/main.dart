@@ -46,8 +46,8 @@ class _ClickstreamDemoAppState extends State<ClickstreamDemoApp>
   // Initialization
   Future<void> _initializeSDK() async {
     final ok = await _clickstream.initialize(
-      appId: 'TestAppDev',
-      endpoint: 'https://events.drowl.com/collect',
+      appId: 'AppId',
+      endpoint: 'https://events.example.com/collect',
       logEvents: true,
       compressEvents: true,
       sessionTimeoutMs: 1800000,
