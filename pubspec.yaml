@@ -1,6 +1,6 @@
 name: clickstream_analytics_plus
 description: "A federated Flutter plugin for AWS Clickstream Analytics supporting Android, iOS, macOS, and Web."
-version: 0.0.1
+version: 0.0.2
 repository: https://github.com/vipinmrowl/clickstream_analytics_plus
 homepage: https://github.com/vipinmrowl/clickstream_analytics_plus
 issue_tracker: https://github.com/vipinmrowl/clickstream_analytics_plus/issues
