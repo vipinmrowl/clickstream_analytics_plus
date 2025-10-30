@@ -6,3 +6,7 @@
 ## 0.0.2
 - Added improvements to platform flexibility and stability.
 - Removed risky `reset()` functionality.
+
+## 0.0.3
+
+- Downgrades min required SDK to 3.7.2 from 3.9.2
