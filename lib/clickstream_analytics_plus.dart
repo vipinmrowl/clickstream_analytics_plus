@@ -1,5 +1,18 @@
+/// Main entry point for Clickstream Analytics Plus Dart API.
+///
+/// Import this file to access the platform-agnostic Clickstream Analytics API.
+///
+/// Example:
+/// ```dart
+/// import 'package:clickstream_analytics_plus/clickstream_analytics_plus.dart';
+/// ```
 import 'clickstream_analytics_plus_platform_interface.dart';
 
+/// Dart API for Clickstream Analytics Plus.
+///
+/// This class provides a platform-agnostic interface for initializing and interacting
+/// with the Clickstream Analytics SDK. It delegates calls to the platform-specific
+/// implementation via [ClickstreamAnalyticsPlusPlatform].
 /// Dart API for Clickstream Analytics Plus.
 ///
 /// This class provides a platform-agnostic interface for initializing and interacting
@@ -9,6 +22,9 @@ class ClickstreamAnalyticsPlus {
   /// The platform-specific implementation instance.
   static ClickstreamAnalyticsPlusPlatform get _platform =>
       ClickstreamAnalyticsPlusPlatform.instance;
+
+  /// Creates a new instance of [ClickstreamAnalyticsPlus].
+  const ClickstreamAnalyticsPlus();
 
   /// Initializes the Clickstream Analytics SDK.
   ///

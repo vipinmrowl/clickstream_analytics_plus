@@ -3,12 +3,18 @@ import 'clickstream_analytics_plus_platform_interface.dart';
 
 /// An implementation of [ClickstreamAnalyticsPlusPlatform] that uses
 /// [MethodChannel] to communicate with the native platform.
+/// Platform implementation of Clickstream Analytics Plus using [MethodChannel].
+///
+/// This class communicates with the native platform using Flutter's method channels.
 class MethodChannelClickstreamAnalyticsPlus
     extends ClickstreamAnalyticsPlusPlatform {
   /// The method channel used to interact with the native platform.
   static const MethodChannel _channel = MethodChannel(
     'clickstream_analytics_plus',
   );
+
+  /// Creates a new instance of [MethodChannelClickstreamAnalyticsPlus].
+  MethodChannelClickstreamAnalyticsPlus();
 
   /// Initializes the Clickstream Analytics SDK on the native platform.
   ///

@@ -2,8 +2,12 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'clickstream_analytics_plus_method_channel.dart';
 
+/// The platform interface for Clickstream Analytics Plus.
+///
+/// Platform-specific implementations should extend this class and set
+/// [ClickstreamAnalyticsPlusPlatform.instance] to their implementation.
 abstract class ClickstreamAnalyticsPlusPlatform extends PlatformInterface {
-  /// Constructs a ClickstreamAnalyticsPlusPlatform.
+  /// Constructs a [ClickstreamAnalyticsPlusPlatform].
   ClickstreamAnalyticsPlusPlatform() : super(token: _token);
 
   static final Object _token = Object();
