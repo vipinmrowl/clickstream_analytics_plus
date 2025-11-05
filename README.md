@@ -23,6 +23,27 @@ This plugin enhances the original SDKs with:
 
 ---
 
+
+## 🍏 Swift Package Manager (iOS/macOS)
+
+To use this plugin on **iOS** or **macOS**, you must enable Swift Package Manager (SPM) support in your Flutter environment. This is required for integrating the AWS Clickstream Swift SDK via SPM.
+
+Enable SPM with:
+
+```bash
+flutter config --enable-swift-package-manager
+```
+
+You can disable it later with:
+
+```bash
+flutter config --no-enable-swift-package-manager
+```
+
+See the [Flutter Swift Package Manager guide](https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-plugin-authors) for more details.
+
+---
+
 ## 🧩 Installation
 
 Add to your Flutter project:

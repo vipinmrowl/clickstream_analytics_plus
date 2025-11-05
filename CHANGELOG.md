@@ -6,3 +6,9 @@
 ## 0.0.2
 - Added improvements to platform flexibility and stability.
 - Removed risky `reset()` functionality.
+
+## 0.0.3
+- Better documentation
+- Deprecated use of js_util and the js package in favor of js interop
+- Updated packages
+- Readme updated to include notes on enabling and disabling SPM
