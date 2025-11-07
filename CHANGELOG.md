@@ -12,3 +12,6 @@
 - Deprecated use of js_util and the js package in favor of js interop
 - Updated packages
 - Readme updated to include notes on enabling and disabling SPM
+
+## 0.0.4
+- Handles conflict when used with Amplify plugins. Hot restarts would cause reinitialization and fail, happens only on IOS/Macos
