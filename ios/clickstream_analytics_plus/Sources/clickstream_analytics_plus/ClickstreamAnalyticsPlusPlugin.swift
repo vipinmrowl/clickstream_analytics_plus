@@ -5,6 +5,7 @@ import Clickstream
 
 /// Flutter plugin for Clickstream Analytics on iOS/macOS.
 public class ClickstreamAnalyticsPlusPlugin: NSObject, FlutterPlugin {
+  private static var hasInitialized = false // Track initialization state across Dart restarts
 
   /// Registers the plugin with the Flutter engine.
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -22,6 +23,13 @@ public class ClickstreamAnalyticsPlusPlugin: NSObject, FlutterPlugin {
             let appId = args["appId"] as? String,
             let endpoint = args["endpoint"] as? String else {
         result(FlutterError(code: "INVALID_ARGUMENTS", message: "Missing appId or endpoint", details: nil))
+        return
+      }
+
+      // ✅ Guard against double initialization (survives hot restart)
+      if Self.hasInitialized {
+        print("⚠️ ClickstreamAnalytics already initialized — skipping.")
+        result(true)
         return
       }
 
@@ -47,9 +55,20 @@ public class ClickstreamAnalyticsPlusPlugin: NSObject, FlutterPlugin {
         }
 
         try ClickstreamAnalytics.initSDK(configuration)
+        print("✅ ClickstreamAnalytics initialized successfully with appId=\(appId)")
+        Self.hasInitialized = true  // ✅ remember across Dart restarts
         DispatchQueue.main.async { result(true) }
       } catch {
-        result(FlutterError(code: "INIT_ERROR", message: "Failed to initialize ClickstreamAnalytics: \(error)", details: nil))
+        // If already initialized, just treat as success
+        if "\(error)".contains("Amplify.configure") {
+          print("⚠️ ClickstreamAnalytics already configured, ignoring.")
+          Self.hasInitialized = true
+          result(true)
+        } else {
+          result(FlutterError(code: "INIT_ERROR",
+                              message: "Failed to initialize ClickstreamAnalytics: \(error)",
+                              details: nil))
+        }
       }
 
     case "setGlobalAttributes":
