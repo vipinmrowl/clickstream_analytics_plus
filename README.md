@@ -131,13 +131,38 @@ If your project sets a lower target, you'll get build errors. Update accordingly
 
 **Codemagic:**
 
-Codemagic caches CocoaPods automatically. To also cache SPM packages, add custom cache paths in `codemagic.yaml`:
+Codemagic supports two configuration approaches — the **Workflow Editor** (UI-based) and **`codemagic.yaml`** (code-based). Both work with this plugin's dual CocoaPods + SPM setup.
+
+**Option A — Workflow Editor (UI):**
+
+The Workflow Editor provides script hook points where you can inject custom scripts (click the **+** between sections). For this plugin, add a **Post-clone** script to enable SPM before the build runs:
+
+| Hook | Script | Why |
+|------|--------|-----|
+| **Post-clone** | `flutter config --enable-swift-package-manager` | Enables SPM before dependency resolution. Must run before `flutter pub get`. |
+
+The available hook points in order are: **post-clone** → **pre-test** → **post-test** → **pre-build** → **post-build** → **pre-publish** → **post-publish**.
+
+In the **Build** section of the Workflow Editor, ensure:
+- **Xcode version** is set to **15.0+**
+- **CocoaPods** is left enabled (Codemagic handles `pod install` automatically)
+
+Codemagic caches CocoaPods by default. For SPM caching in the Workflow Editor, add these under **Environment > Custom cache paths**:
+
+```
+$HOME/Library/Caches/org.swift.swiftpm
+$CM_BUILD_DIR/build/ios/SourcePackages
+```
+
+**Option B — `codemagic.yaml`:**
+
+For full control, use a YAML configuration:
 
 ```yaml
 workflows:
   ios-workflow:
     environment:
-      xcode: 15.4  # or latest — must be 15+
+      xcode: 15.4  # must be 15+
       flutter: stable
     cache:
       cache_paths:
