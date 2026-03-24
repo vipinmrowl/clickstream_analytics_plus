@@ -24,17 +24,161 @@ This plugin enhances the original SDKs with:
 ---
 
 
-## 🍏 iOS / macOS Requirements
+## 🍏 iOS / macOS Integration Guide
 
-This plugin uses **Swift Package Manager (SPM)** to integrate the [AWS Clickstream Swift SDK](https://github.com/aws-solutions-library-samples/clickstream-analytics-on-aws-swift-sdk) on iOS and macOS. SPM is required because the Clickstream SDK and its dependency (Amplify v2) are distributed exclusively via SPM.
+### Why SPM Is Required
 
-**Flutter 3.24+** includes native SPM support. If your project doesn't already use SPM, enable it with:
+This plugin depends on the [AWS Clickstream Swift SDK](https://github.com/aws-solutions-library-samples/clickstream-analytics-on-aws-swift-sdk), which in turn depends on **AWS Amplify v2 for Swift**. Both are distributed **exclusively via Swift Package Manager (SPM)** — they are not available on CocoaPods or Carthage.
+
+The `.podspec` files included in this plugin are stubs that satisfy Flutter's CocoaPods tooling. They do not pull in the Clickstream native SDK — that resolution happens through the `Package.swift` manifests.
+
+### Dual Integration: CocoaPods + SPM Side by Side
+
+Most existing Flutter apps use CocoaPods for other dependencies (Firebase, Google Maps, etc.). **Flutter 3.24+ supports CocoaPods and SPM running side by side** in the same project. This is the expected setup — you do not need to migrate away from CocoaPods.
+
+When both are active:
+- **CocoaPods** continues to manage pods listed in your `Podfile` (including the Flutter engine).
+- **SPM** handles packages declared via `Package.swift` manifests in plugins (like this plugin's Clickstream SDK dependency).
+- Xcode resolves both dependency graphs independently — they coexist without conflict.
+
+### Setup for Existing CocoaPods Projects
+
+**Prerequisites:** Flutter 3.24+, Xcode 15+, Swift 5.9+.
+
+**Step 1 — Enable SPM in Flutter:**
 
 ```bash
 flutter config --enable-swift-package-manager
 ```
 
-> **Note:** CocoaPods is not supported for the native iOS/macOS dependency. The podspec files included in this plugin are stubs for Flutter tooling compatibility; the actual native SDK resolution is handled by SPM via the `Package.swift` manifests.
+Verify with `flutter config` — you should see `enable-swift-package-manager: true`.
+
+**Step 2 — Add the plugin and rebuild:**
+
+```bash
+flutter pub add clickstream_analytics_plus
+flutter build ios   # or: flutter build macos
+```
+
+On the first build after enabling SPM, Flutter will:
+1. Keep your existing `Podfile` and `Pods/` directory untouched.
+2. Generate a `FlutterGeneratedPluginSwiftPackage` inside `ios/Flutter/ephemeral/Packages/`.
+3. Add an SPM package reference in the Xcode project, which pulls the Clickstream SDK and Amplify via SPM.
+4. Create or update `Package.resolved` at the workspace level with pinned SPM dependency versions.
+
+**Your `Podfile` stays the same.** No manual changes needed.
+
+**Step 3 — Commit the project changes:**
+
+After the first successful build, you'll see changes in:
+
+```
+ios/Runner.xcodeproj/project.pbxproj   # Now references the SPM package
+ios/Flutter/Debug.xcconfig              # CocoaPods include added
+ios/Flutter/Release.xcconfig            # CocoaPods include added
+```
+
+> **Note:** `Package.resolved` files are generated lock files. You can gitignore them (this plugin does) or commit them for reproducible builds — either approach works.
+
+### New Projects (SPM-Only)
+
+For greenfield projects, you can skip CocoaPods entirely:
+
+```bash
+flutter config --enable-swift-package-manager
+flutter create --platforms=ios,macos my_app
+cd my_app
+flutter pub add clickstream_analytics_plus
+flutter run
+```
+
+### Deployment Targets
+
+The minimum deployment targets required by the Clickstream Swift SDK:
+
+| Platform | Minimum Version |
+|----------|:-:|
+| iOS      | 13.0 |
+| macOS    | 10.15 |
+
+If your project sets a lower target, you'll get build errors. Update accordingly:
+
+- **Podfile (iOS):** `platform :ios, '13.0'`
+- **Podfile (macOS):** `platform :osx, '10.15'`
+- **Xcode:** Set "Minimum Deployments" in the Runner target's General tab.
+
+### CI/CD Considerations
+
+**Xcode version:** Use Xcode 15+ (SPM resolution requires Swift 5.9+).
+
+**SPM package resolution:** The first build downloads the full SPM dependency graph (Amplify, AWS SDK for Swift, Starscream, SQLite.swift, etc.) which can take 2–5 minutes. Cache the SPM SourcePackages directory to speed up subsequent builds.
+
+**Example (GitHub Actions):**
+
+```yaml
+- name: Cache CocoaPods
+  uses: actions/cache@v4
+  with:
+    path: ios/Pods
+    key: pods-${{ hashFiles('ios/Podfile.lock') }}
+
+- name: Cache SPM packages
+  uses: actions/cache@v4
+  with:
+    path: build/ios/SourcePackages
+    key: spm-${{ hashFiles('**/Package.resolved') }}
+```
+
+**Common CI gotchas:**
+
+| Issue | Fix |
+|-------|-----|
+| SPM resolution timeouts | Ensure outbound HTTPS to `github.com` is allowed. Pre-warm the SPM cache. |
+| `xcode-select` points to CLI tools only | Point it to full Xcode: `sudo xcode-select -s /Applications/Xcode.app` |
+| Parallel jobs with shared derived-data | Use separate derived-data paths per job, or serialize SPM resolution. |
+
+### Troubleshooting
+
+**"Unable to find module dependency: 'Clickstream'"**
+
+SPM is not enabled or did not resolve the Clickstream SDK.
+
+1. Verify: `flutter config` should show `enable-swift-package-manager: true`.
+2. Clean rebuild: `flutter clean && flutter pub get && flutter build ios`.
+3. Open `ios/Runner.xcworkspace` in Xcode → **File > Packages** — you should see `clickstream-analytics-on-aws-swift-sdk` listed.
+
+**Deployment target too low**
+
+```
+The package product 'Clickstream' requires minimum platform version 13.0
+```
+
+Set iOS to 13.0+ / macOS to 10.15+ in your Podfile and Xcode project settings. Run `pod install`, then rebuild.
+
+**`Package.resolved` merge conflicts**
+
+Accept either version, then run `flutter build ios` to let SPM re-resolve.
+
+**"Package resolution failed" or "cannot clone repository"**
+
+SPM needs network access to clone repos from GitHub. Check network/proxy settings. Behind a corporate proxy:
+
+```bash
+git config --global http.proxy http://your-proxy:port
+```
+
+**Build fails after upgrading Flutter or Xcode**
+
+Full clean rebuild:
+
+```bash
+flutter clean
+rm -rf ios/Pods ios/Podfile.lock
+rm -rf build/
+flutter pub get
+cd ios && pod install && cd ..
+flutter build ios
+```
 
 For more details, see the [Flutter SPM guide for app developers](https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-app-developers).
 

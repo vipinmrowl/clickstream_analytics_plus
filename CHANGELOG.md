@@ -6,6 +6,7 @@
 - Added clear documentation that SPM is required (Clickstream SDK + Amplify v2 are SPM-only, not on CocoaPods)
 - Removed checked-in Package.resolved files and added them to .gitignore
 - Updated README: modernized iOS/macOS requirements section, updated comparison table
+- Added comprehensive integration guide: dual CocoaPods+SPM setup, CI/CD caching, troubleshooting
 
 ## 0.0.1
 - Initial release with Android, iOS, macOS, and Web support.
