@@ -113,7 +113,7 @@ If your project sets a lower target, you'll get build errors. Update accordingly
 
 **SPM package resolution:** The first build downloads the full SPM dependency graph (Amplify, AWS SDK for Swift, Starscream, SQLite.swift, etc.) which can take 2–5 minutes. Cache the SPM SourcePackages directory to speed up subsequent builds.
 
-**Example (GitHub Actions):**
+**GitHub Actions:**
 
 ```yaml
 - name: Cache CocoaPods
@@ -128,6 +128,31 @@ If your project sets a lower target, you'll get build errors. Update accordingly
     path: build/ios/SourcePackages
     key: spm-${{ hashFiles('**/Package.resolved') }}
 ```
+
+**Codemagic:**
+
+Codemagic caches CocoaPods automatically. To also cache SPM packages, add custom cache paths in `codemagic.yaml`:
+
+```yaml
+workflows:
+  ios-workflow:
+    environment:
+      xcode: 15.4  # or latest — must be 15+
+      flutter: stable
+    cache:
+      cache_paths:
+        - $HOME/Library/Caches/org.swift.swiftpm  # Global SPM cache
+        - $CM_BUILD_DIR/build/ios/SourcePackages   # Project-level SPM packages
+    scripts:
+      - name: Enable SPM
+        script: flutter config --enable-swift-package-manager
+      - name: Get dependencies
+        script: flutter pub get
+      - name: Build iOS
+        script: flutter build ios --no-codesign
+```
+
+> **Tip:** Codemagic's macOS build machines include full Xcode installations, so `xcode-select` issues are rare. If SPM resolution is slow on the first run, the cache paths above will speed up subsequent builds.
 
 **Common CI gotchas:**
 
