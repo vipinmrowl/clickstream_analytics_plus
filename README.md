@@ -24,23 +24,19 @@ This plugin enhances the original SDKs with:
 ---
 
 
-## 🍏 Swift Package Manager (iOS/macOS)
+## 🍏 iOS / macOS Requirements
 
-To use this plugin on **iOS** or **macOS**, you must enable Swift Package Manager (SPM) support in your Flutter environment. This is required for integrating the AWS Clickstream Swift SDK via SPM.
+This plugin uses **Swift Package Manager (SPM)** to integrate the [AWS Clickstream Swift SDK](https://github.com/aws-solutions-library-samples/clickstream-analytics-on-aws-swift-sdk) on iOS and macOS. SPM is required because the Clickstream SDK and its dependency (Amplify v2) are distributed exclusively via SPM.
 
-Enable SPM with:
+**Flutter 3.24+** includes native SPM support. If your project doesn't already use SPM, enable it with:
 
 ```bash
 flutter config --enable-swift-package-manager
 ```
 
-You can disable it later with:
+> **Note:** CocoaPods is not supported for the native iOS/macOS dependency. The podspec files included in this plugin are stubs for Flutter tooling compatibility; the actual native SDK resolution is handled by SPM via the `Package.swift` manifests.
 
-```bash
-flutter config --no-enable-swift-package-manager
-```
-
-See the [Flutter Swift Package Manager guide](https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-plugin-authors) for more details.
+For more details, see the [Flutter SPM guide for app developers](https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-app-developers).
 
 ---
 
@@ -225,14 +221,14 @@ Future community contributions can extend this to **Windows** and **Linux**.
 |----------|-----------------------------|----------------------------------|
 | Maintainer | Community (Open Source) | AWS (Official) |
 | Android | ✅ Supported | ✅ Supported |
-| iOS | ✅ Supported (via Swift SDK / SPM) | ✅ Supported (CocoaPods only) |
+| iOS | ✅ Supported (via Swift SDK / SPM) | ✅ Supported (vendored CocoaPods) |
 | macOS | ✅ Supported | ❌ Not Supported |
 | Web | ✅ Supported | ❌ Not Supported |
 | Linux / Windows | 🧩 Planned | ❌ Not Supported |
 | Session Lifecycle | ✅ Integrated with AppLifecycle | ⚠️ Manual only |
 | Federated Plugin Architecture | ✅ Yes | ❌ No |
 | Example App | ✅ Multi-tab demo | ✅ Basic example |
-| Build Integration | ✅ SPM + Gradle | CocoaPods + Gradle |
+| Build Integration | ✅ SPM + Gradle (modern) | Vendored CocoaPods + Gradle |
 | Logging Toggle | ✅ Via initialize params | ⚠️ Limited |
 | License | Apache 2.0 | Apache 2.0 |
 

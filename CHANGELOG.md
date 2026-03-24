@@ -1,3 +1,12 @@
+## 0.0.5
+- Cleaned up iOS/macOS podspecs with accurate metadata (author, homepage, version, descriptions)
+- Enabled PrivacyInfo.xcprivacy resource bundles in both iOS and macOS podspecs
+- Bumped macOS podspec minimum deployment target from 10.11 to 10.15 (matches Package.swift)
+- Bumped minimum Flutter version to 3.24.0 (required for native SPM support)
+- Added clear documentation that SPM is required (Clickstream SDK + Amplify v2 are SPM-only, not on CocoaPods)
+- Removed checked-in Package.resolved files and added them to .gitignore
+- Updated README: modernized iOS/macOS requirements section, updated comparison table
+
 ## 0.0.1
 - Initial release with Android, iOS, macOS, and Web support.
 - Federated plugin architecture.

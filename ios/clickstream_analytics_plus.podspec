@@ -2,16 +2,25 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
 # Run `pod lib lint clickstream_analytics_plus.podspec` to validate before publishing.
 #
+# NOTE: This plugin requires Swift Package Manager (SPM) for the native
+# AWS Clickstream Swift SDK dependency. The Clickstream SDK and its
+# dependency (Amplify v2) are distributed exclusively via SPM and are
+# NOT available on CocoaPods.
+#
+# Enable SPM in your Flutter project:
+#   flutter config --enable-swift-package-manager
+#
 Pod::Spec.new do |s|
   s.name             = 'clickstream_analytics_plus'
-  s.version          = '0.0.1'
-  s.summary          = 'A new Flutter plugin project.'
+  s.version          = '0.0.5'
+  s.summary          = 'A Flutter plugin for AWS Clickstream Analytics.'
   s.description      = <<-DESC
-A new Flutter plugin project.
+A federated Flutter plugin for AWS Clickstream Analytics supporting Android, iOS, macOS, and Web.
+Uses Swift Package Manager for the native AWS Clickstream Swift SDK dependency.
                        DESC
-  s.homepage         = 'http://example.com'
+  s.homepage         = 'https://github.com/vipinmrowl/clickstream_analytics_plus'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'Vipin Kashyap' => 'vipinkashyap2110@gmail.com' }
   s.source           = { :path => '.' }
   s.source_files = 'clickstream_analytics_plus/Sources/clickstream_analytics_plus/**/*'
   s.dependency 'Flutter'
@@ -21,9 +30,5 @@ A new Flutter plugin project.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
   s.swift_version = '5.0'
 
-  # If your plugin requires a privacy manifest, for example if it uses any
-  # required reason APIs, update the PrivacyInfo.xcprivacy file to describe your
-  # plugin's privacy impact, and then uncomment this line. For more information,
-  # see https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
-  # s.resource_bundles = {'clickstream_analytics_plus_privacy' => ['clickstream_analytics_plus/Sources/clickstream_analytics_plus/PrivacyInfo.xcprivacy']}
+  s.resource_bundles = {'clickstream_analytics_plus_privacy' => ['clickstream_analytics_plus/Sources/clickstream_analytics_plus/PrivacyInfo.xcprivacy']}
 end

@@ -9,6 +9,9 @@
 .build/
 .swiftpm/
 
+# Swift Package Manager resolved files (generated lock files)
+**/Package.resolved
+
 
 # Flutter repo-specific
 /bin/cache/
