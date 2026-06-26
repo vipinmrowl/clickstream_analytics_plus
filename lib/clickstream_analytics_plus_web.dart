@@ -87,13 +87,11 @@ class ClickstreamAnalyticsPlusWeb extends ClickstreamAnalyticsPlusPlatform {
     Map<String, dynamic>? initialGlobalAttributes,
   }) async {
     final options = <String, dynamic>{
-      if (logEvents != null) 'logEvents': logEvents,
-      if (compressEvents != null) 'compressEvents': compressEvents,
-      if (sessionTimeoutMs != null) 'sessionTimeoutMs': sessionTimeoutMs,
-      if (sendEventIntervalMs != null)
-        'sendEventIntervalMs': sendEventIntervalMs,
-      if (initialGlobalAttributes != null)
-        'initialGlobalAttributes': initialGlobalAttributes,
+      'logEvents': ?logEvents,
+      'compressEvents': ?compressEvents,
+      'sessionTimeoutMs': ?sessionTimeoutMs,
+      'sendEventIntervalMs': ?sendEventIntervalMs,
+      'initialGlobalAttributes': ?initialGlobalAttributes,
     };
 
     final jsOptions = options.isNotEmpty ? options.jsify() : null;

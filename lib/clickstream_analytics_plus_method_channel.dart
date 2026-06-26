@@ -32,13 +32,11 @@ class MethodChannelClickstreamAnalyticsPlus
     final result = await _channel.invokeMethod('initialize', {
       'appId': appId,
       'endpoint': endpoint,
-      if (logEvents != null) 'logEvents': logEvents,
-      if (compressEvents != null) 'compressEvents': compressEvents,
-      if (sessionTimeoutMs != null) 'sessionTimeoutMs': sessionTimeoutMs,
-      if (sendEventIntervalMs != null)
-        'sendEventIntervalMs': sendEventIntervalMs,
-      if (initialGlobalAttributes != null)
-        'initialGlobalAttributes': initialGlobalAttributes,
+      'logEvents': ?logEvents,
+      'compressEvents': ?compressEvents,
+      'sessionTimeoutMs': ?sessionTimeoutMs,
+      'sendEventIntervalMs': ?sendEventIntervalMs,
+      'initialGlobalAttributes': ?initialGlobalAttributes,
     });
     if (result == true || result == 1 || result?.toString() == 'true') {
       return true;

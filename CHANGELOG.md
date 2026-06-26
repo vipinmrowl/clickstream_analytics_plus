@@ -1,3 +1,9 @@
+## 0.0.6
+- Bumped `flutter_lints` to ^6.0.0
+- Adopted null-aware map elements (`'key': ?value`) in the method channel and web implementations
+- Removed a duplicated class doc comment in the public Dart API
+- Fixed CHANGELOG entry ordering (now newest-first)
+
 ## 0.0.5
 - Cleaned up iOS/macOS podspecs with accurate metadata (author, homepage, version, descriptions)
 - Enabled PrivacyInfo.xcprivacy resource bundles in both iOS and macOS podspecs
@@ -8,14 +14,8 @@
 - Updated README: modernized iOS/macOS requirements section, updated comparison table
 - Added comprehensive integration guide: dual CocoaPods+SPM setup, CI/CD caching, troubleshooting
 
-## 0.0.1
-- Initial release with Android, iOS, macOS, and Web support.
-- Federated plugin architecture.
-- Multi-tab sample app included.
-
-## 0.0.2
-- Added improvements to platform flexibility and stability.
-- Removed risky `reset()` functionality.
+## 0.0.4
+- Handles conflict when used with Amplify plugins. Hot restarts would cause reinitialization and fail, happens only on IOS/Macos
 
 ## 0.0.3
 - Better documentation
@@ -23,5 +23,11 @@
 - Updated packages
 - Readme updated to include notes on enabling and disabling SPM
 
-## 0.0.4
-- Handles conflict when used with Amplify plugins. Hot restarts would cause reinitialization and fail, happens only on IOS/Macos
+## 0.0.2
+- Added improvements to platform flexibility and stability.
+- Removed risky `reset()` functionality.
+
+## 0.0.1
+- Initial release with Android, iOS, macOS, and Web support.
+- Federated plugin architecture.
+- Multi-tab sample app included.
